@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>React macOS Simulator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      /* For modern, macOS-style scrollbars */
+      /* Firefox */
+      * {
+        scrollbar-width: thin;
+        scrollbar-color: rgba(155, 155, 155, 0.7) transparent;
+      }
+      
+      /* Webkit (Chrome, Safari, Edge) */
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: transparent; /* Makes track invisible */
+      }
+      ::-webkit-scrollbar-thumb {
+        background-color: rgba(0, 0, 0, 0.3);
+        border-radius: 10px;
+        border: 2px solid transparent;
+        background-clip: content-box;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background-color: rgba(0, 0, 0, 0.5);
+      }
+
+      /* Slide Transitions */
+      @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+      .animate-fade-in {
+        animation: fadeIn 0.5s ease-in-out forwards;
+      }
+
+      @keyframes slideInRight {
+        from { transform: translateX(40px); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+      }
+      .animate-slide-in-right {
+        animation: slideInRight 0.5s ease-in-out forwards;
+      }
+
+      @keyframes zoomIn {
+        from { transform: scale(0.95); opacity: 0; }
+        to { transform: scale(1); opacity: 1; }
+      }
+      .animate-zoom-in {
+        animation: zoomIn 0.5s ease-in-out forwards;
+      }
+
+      /* Enhanced Nani AI Orb Animations */
+      
+      /* Idle State: Gentle, slow breathing */
+      @keyframes nani-pulse {
+        0%, 100% { transform: scale(1); opacity: 0.8; }
+        50% { transform: scale(1.05); opacity: 1; }
+      }
+      .nani-core-idle { 
+          animation: nani-pulse 5s ease-in-out infinite; 
+          transform-origin: center;
+      }
+      .nani-ring1-idle {
+          animation: nani-pulse 5s ease-in-out infinite;
+          transform-origin: center;
+          animation-delay: -2.5s;
+      }
+      .nani-ring2-idle {
+          animation: nani-pulse 5s ease-in-out infinite;
+          transform-origin: center;
+      }
+
+      /* Listening State: Active listening with rotating rings */
+      @keyframes nani-subtle-pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.02); }
+      }
+      .nani-core-listening { 
+        animation: nani-subtle-pulse 1.5s ease-in-out infinite;
+        transform-origin: center;
+      }
+
+      @keyframes nani-rotate {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+      }
+      @keyframes nani-rotate-reverse {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(-360deg); }
+      }
+      .nani-ring1-listening {
+        animation: nani-rotate 15s linear infinite;
+        transform-origin: center;
+      }
+      .nani-ring2-listening {
+        animation: nani-rotate-reverse 12s linear infinite;
+        transform-origin: center;
+      }
+
+      /* Processing State: Faster, more energetic thinking */
+       .nani-core-processing {
+        animation: nani-rotate 1.5s linear infinite reverse, nani-pulse 0.8s ease-in-out infinite;
+        transform-origin: center;
+      }
+      .nani-ring1-processing {
+        animation: nani-rotate 2s linear infinite;
+        transform-origin: center;
+      }
+       .nani-ring2-processing {
+        animation: nani-rotate-reverse 1.5s linear infinite;
+        transform-origin: center;
+      }
+
+      /* Speaking State: Rhythmic pulsing like sound waves */
+      @keyframes nani-speak-core {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+      }
+      @keyframes nani-speak-wave {
+        0% { transform: scale(0.8); opacity: 0.8; }
+        100% { transform: scale(1.4); opacity: 0; }
+      }
+      .nani-core-speaking {
+        animation: nani-speak-core 0.5s ease-in-out infinite;
+        transform-origin: center;
+      }
+      .nani-ring1-speaking {
+        animation: nani-speak-wave 1.2s ease-out infinite;
+        transform-origin: center;
+      }
+      .nani-ring2-speaking {
+        animation: nani-speak-wave 1.2s ease-out infinite;
+        transform-origin: center;
+        animation-delay: -0.6s;
+      }
+
+      /* Error State: Quick glitch effect */
+      @keyframes nani-error-glitch {
+        0%   { transform: translate(0, 0); }
+        25%  { transform: translate(-3px, 3px); }
+        50%  { transform: translate(3px, -3px); }
+        75%  { transform: translate(-3px, -3px); }
+        100% { transform: translate(0, 0); }
+      }
+      .nani-all-error { animation: nani-error-glitch 0.15s linear 4; }
+
+      /* Nani message highlight */
+      @keyframes speaking-glow {
+          0%, 100% { box-shadow: 0 0 8px 2px rgba(168, 85, 247, 0); }
+          50% { box-shadow: 0 0 12px 4px rgba(168, 85, 247, 0.5); }
+      }
+      .animate-speaking-glow {
+          animation: speaking-glow 2s ease-in-out infinite;
+      }
+      
+      /* macOS specific effects */
+      @keyframes minimize-effect {
+        from {
+          transform: scale(1);
+          opacity: 1;
+        }
+        to {
+          transform: scale(0.1) translateY(60vh);
+          opacity: 0;
+        }
+      }
+      .animate-minimize {
+        animation: minimize-effect 0.4s cubic-bezier(0.45, 0, 0.85, 0.55) forwards;
+        pointer-events: none;
+        transform-origin: 50% 200%; /* Creates a nice arc effect */
+      }
+      
+      @keyframes close-pop-effect {
+        0% {
+          transform: scale(1);
+          opacity: 1;
+        }
+        80% {
+          transform: scale(1.03);
+          opacity: 0.8;
+        }
+        100% {
+          transform: scale(0.8);
+          opacity: 0;
+        }
+      }
+      .animate-close-pop {
+        animation: close-pop-effect 0.2s ease-out forwards;
+        pointer-events: none;
+      }
+
+      @keyframes dock-bounce {
+        0%, 100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-12px);
+        }
+      }
+      .animate-dock-bounce {
+        animation: dock-bounce 0.5s ease-in-out;
+      }
+
+      /* Mobile responsiveness */
+      @media (max-width: 768px) {
+        .desktop-item {
+          display: none !important;
+        }
+      }
+    </style>
+
+<script type="importmap">
+{
+  "imports": {
+    "vite": "https://aistudiocdn.com/vite@^7.2.4",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.30.0",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "@vitejs/plugin-react": "https://aistudiocdn.com/@vitejs/plugin-react@^5.1.1",
+    "pptxgenjs": "https://aistudiocdn.com/pptxgenjs@^4.0.1",
+    "jszip": "https://aistudiocdn.com/jszip@^3.10.1"
+  }
+}
+</script>
+  <script type="module" crossorigin src="./assets/index-DDTzWImI.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index-j03qD43Y.css">
+</head>
+  <body class="overflow-hidden">
+    <div id="root"></div>
+  </body>
+</html>
